@@ -14,7 +14,7 @@
 -- Companion can also ask for a full resend by setting the global variable
 -- CompanionFeedbackRefresh (the module does this by itself when it connects).
 
-local PLUGIN_VERSION = '0.1.0'
+local PLUGIN_VERSION = '0.1.1'
 
 -- ---------------------------------------------------------------------------
 -- Settings. Change these to suit your show.
@@ -62,6 +62,7 @@ local runId = 0
 local last = {} -- last value sent per address
 local forceAll = true
 local hbCount = 0
+local sendError = nil -- set when the console refuses a SendOSC
 
 local function try(fn, ...)
 	if type(fn) ~= 'function' then
@@ -121,6 +122,9 @@ local function clean(s)
 end
 
 local function sendRaw(address, typeTag, value)
+	if sendError then
+		return false
+	end
 	local msg
 	if typeTag == 's' then
 		local text = clean(value)
@@ -131,12 +135,18 @@ local function sendRaw(address, typeTag, value)
 	else
 		msg = '/' .. CONFIG.root .. address .. ',' .. typeTag .. ',' .. tostring(value)
 	end
+	local ok = true
 	for _, line in ipairs(CONFIG.osc_lines) do
-		Cmd('SendOSC ' .. line .. ' "' .. msg .. '"')
+		local result = Cmd('SendOSC ' .. line .. ' "' .. msg .. '"')
+		if type(result) == 'string' and not result:upper():find('^OK') then
+			ok = false
+			sendError = 'OSC line ' .. tostring(line) .. ' refused the message (' .. result .. ')'
+		end
 	end
 	if CONFIG.echo then
 		Printf('CompanionFeedback: ' .. msg)
 	end
+	return ok
 end
 
 -- Changes waiting to go out. Latest value per address wins.
@@ -375,6 +385,13 @@ local function loop(myRun)
 			ErrPrintf('CompanionFeedback: ' .. tostring(err))
 		end
 		flush()
+		if sendError then
+			running = false
+			ErrPrintf('CompanionFeedback stopped: ' .. sendError .. '.')
+			ErrPrintf('Check Menu > In & Out > OSC: the line number(s) in osc_lines must exist and have Send Command = Yes. ' ..
+				'Lines are numbered from 1 at the top. Then run the plugin again.')
+			return
+		end
 		sinceBeat = sinceBeat + CONFIG.interval
 		if sinceBeat >= CONFIG.heartbeat then
 			sinceBeat = 0
@@ -394,6 +411,7 @@ local function start()
 	runId = runId + 1
 	last, seqCurrent, forceAll = {}, {}, true
 	queue, queued = {}, {}
+	sendError = nil
 	Printf('CompanionFeedback ' .. PLUGIN_VERSION .. ' started. Sending to OSC line(s) ' ..
 		table.concat(CONFIG.osc_lines, ', ') .. '.')
 	sendRaw('/hello', 's', PLUGIN_VERSION)
