@@ -12,7 +12,8 @@
 --   Plugin "CompanionFeedback" "diag"     print what this console's Lua API offers
 --
 -- Companion can also ask for a full resend by setting the global variable
--- CompanionFeedbackRefresh (the module does this by itself when it connects).
+-- CompanionFeedbackRefresh. The Companion module sends Plugin "CompanionFeedback" "refresh"
+-- by itself whenever it (re)connects.
 
 local PLUGIN_VERSION = '0.1.1'
 

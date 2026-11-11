@@ -216,7 +216,7 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 
 	/** Ask the plugin to resend every value on its next tick. */
 	requestRefresh(): void {
-		this.sendCommand('SetGlobalVariable "CompanionFeedbackRefresh" "1"')
+		this.sendCommand('Plugin "CompanionFeedback" "refresh"')
 	}
 
 	sendCommand(command: string): void {
