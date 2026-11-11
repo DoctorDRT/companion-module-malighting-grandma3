@@ -61,9 +61,30 @@ function migratePrefixAndPorts(
 	return result
 }
 
+// Existing connections keep the old behaviour (status = port open) until the plugin is set up.
+function addPluginStatusConfig(
+	_context: CompanionUpgradeContext<ModuleConfig>,
+	props: CompanionStaticUpgradeProps<ModuleConfig>,
+): CompanionStaticUpgradeResult<ModuleConfig> {
+	const result: CompanionStaticUpgradeResult<ModuleConfig> = {
+		updatedActions: [],
+		updatedConfig: null,
+		updatedFeedbacks: [],
+	}
+	const cfg = props.config
+	if (!cfg || cfg.usePlugin !== undefined) return result
+	cfg.usePlugin = false
+	cfg.pluginRoot = 'ma3'
+	cfg.heartbeatTimeout = 6
+	cfg.autoStartPlugin = false
+	result.updatedConfig = cfg
+	return result
+}
+
 export const UpgradeScripts: CompanionStaticUpgradeScript<ModuleConfig>[] = [
 	updateExecButtonPageFromDropdownToInteger,
 	migratePrefixAndPorts,
+	addPluginStatusConfig,
 	/*
 	 * Place your upgrade scripts here
 	 * Remember that once it has been added it cannot be removed!
