@@ -216,6 +216,7 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 
 	/** Ask the plugin to resend every value on its next tick. */
 	requestRefresh(): void {
+		this.log('info', `Asking the console plugin to resend everything (${this.config.host}:${this.config.port})`)
 		this.sendCommand('Plugin "CompanionFeedback" "refresh"')
 	}
 

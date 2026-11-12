@@ -15,7 +15,7 @@
 -- CompanionFeedbackRefresh. The Companion module sends Plugin "CompanionFeedback" "refresh"
 -- by itself whenever it (re)connects.
 
-local PLUGIN_VERSION = '0.1.1'
+local PLUGIN_VERSION = '0.1.2'
 
 -- ---------------------------------------------------------------------------
 -- Settings. Change these to suit your show.
@@ -463,6 +463,7 @@ return function(display, argument)
 		stop()
 	elseif arg == 'refresh' then
 		forceAll = true
+		Printf('CompanionFeedback: resending everything' .. (running and '' or ' (not running, start it first)'))
 	elseif arg == 'diag' then
 		diag()
 	elseif running then
