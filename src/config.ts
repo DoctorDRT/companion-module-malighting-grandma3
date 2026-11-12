@@ -6,6 +6,10 @@ export interface ModuleConfig {
 	inputPrefix: string
 	outputPrefix: string
 	feedbackPort: string
+	usePlugin: boolean
+	pluginRoot: string
+	heartbeatTimeout: number
+	autoStartPlugin: boolean
 }
 
 export function GetConfigFields(): SomeCompanionConfigField[] {
@@ -59,6 +63,51 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			label: 'grandMA3 Output Prefix',
 			width: 6,
 			default: '',
+		},
+		{
+			type: 'static-text',
+			id: 'pluginInfo',
+			width: 12,
+			label: 'Live console status',
+			value:
+				'Import and run the <b>CompanionFeedback</b> plugin on the console to get live cue names, fader levels, playback state and a real online/offline status. ' +
+				'It sends to the OSC line(s) set at the top of the plugin, which must point at this computer on the Output Port above with "Enable Output" on. See the help page for setup steps.',
+		},
+		{
+			type: 'checkbox',
+			id: 'usePlugin',
+			label: 'Use CompanionFeedback plugin for status',
+			tooltip: 'When on, the connection only shows OK while heartbeats arrive from the console plugin.',
+			width: 6,
+			default: true,
+		},
+		{
+			type: 'textinput',
+			id: 'pluginRoot',
+			label: 'Plugin address root',
+			tooltip: 'Must match CONFIG.root in the plugin. Default: ma3',
+			width: 6,
+			default: 'ma3',
+			isVisibleExpression: '$(options:usePlugin)',
+		},
+		{
+			type: 'number',
+			id: 'heartbeatTimeout',
+			label: 'Offline after no heartbeat for (seconds)',
+			width: 6,
+			min: 2,
+			max: 120,
+			default: 6,
+			isVisibleExpression: '$(options:usePlugin)',
+		},
+		{
+			type: 'checkbox',
+			id: 'autoStartPlugin',
+			label: 'Start the plugin on the console if it is not running',
+			tooltip: 'Sends Plugin "CompanionFeedback" "start" at most every 30 seconds while no heartbeat arrives.',
+			width: 6,
+			default: false,
+			isVisibleExpression: '$(options:usePlugin)',
 		},
 	]
 }

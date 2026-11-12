@@ -14,6 +14,33 @@ export function UpdateActions(self: ModuleInstance): void {
 	}
 
 	self.setActionDefinitions({
+		request_refresh: {
+			name: 'Live status: ask the console plugin to resend everything',
+			description: 'Needs the CompanionFeedback plugin running on the console.',
+			options: [],
+			callback: async () => {
+				self.requestRefresh()
+			},
+		},
+		plugin_control: {
+			name: 'Live status: start or stop the console plugin',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Do',
+					id: 'mode',
+					default: 'start',
+					choices: [
+						{ id: 'start', label: 'Start' },
+						{ id: 'stop', label: 'Stop' },
+					],
+				},
+			],
+			callback: async (event) => {
+				const mode = event.options.mode === 'stop' ? 'stop' : 'start'
+				self.sendCommand(`Plugin "CompanionFeedback" "${mode}"`)
+			},
+		},
 		quickey: {
 			name: 'Select Quickey via number',
 			options: [

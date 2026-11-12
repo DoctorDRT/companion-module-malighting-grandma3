@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<GMA3 DataVersion="2.2.5.2">
+    <UserPlugin Name="CompanionFeedback" Guid="C0 3D A1 7E 4B 52 11 F0 9A 6E 2C 1B 7D 84 E5 01" Author="Shepherds AVL" Version="0.1.0" Path="CompanionFeedback">
+        <ComponentLua Name="CompanionFeedback" Guid="C0 3D A1 7E 4B 52 11 F0 9A 6E 2C 1B 7D 84 E5 02" FileName="CompanionFeedback.lua" />
+    </UserPlugin>
+</GMA3>
